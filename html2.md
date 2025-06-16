@@ -5,7 +5,7 @@
 ## Установка и подключение
 
 ```javascript
-var html = require('./gumbo-dom');
+var html = require('./html2');
 
 ```
 
