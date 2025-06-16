@@ -1,0 +1,436 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>html2</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="gumbo-dom-api-documentation">Gumbo DOM API Documentation</h1>
+<p>Легковесная DOM библиотека для Duktape 1.8.0 с поддержкой HTML парсинга через Gumbo.</p>
+<h2 id="установка-и-подключение">Установка и подключение</h2>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'./gumbo-dom'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+</code></pre>
+<h2 id="основные-методы">Основные методы</h2>
+<h3 id="parsehtmlstring"><code>parse(htmlString)</code></h3>
+<p>Парсит HTML строку и возвращает объект с документом и корневым элементом.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> htmlContent <span class="token operator">=</span> <span class="token string">'&lt;html&gt;&lt;body&gt;&lt;div id="test"&gt;Hello World&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>htmlContent<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>doc<span class="token punctuation">.</span>document<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// [document]</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>doc<span class="token punctuation">.</span>root<span class="token punctuation">)</span><span class="token punctuation">;</span>     <span class="token comment">// &lt;html&gt;</span>
+
+</code></pre>
+<p><strong>Возвращает:</strong></p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token punctuation">{</span>
+  document<span class="token punctuation">:</span> Node<span class="token punctuation">,</span> <span class="token comment">// документ</span>
+  root<span class="token punctuation">:</span> Node      <span class="token comment">// корневой элемент (&lt;html&gt;)</span>
+<span class="token punctuation">}</span>
+
+</code></pre>
+<h2 id="класс-node">Класс Node</h2>
+<h3 id="свойства">Свойства</h3>
+<h4 id="nodetype-readonly"><code>nodeType</code> (readonly)</h4>
+<p>Тип узла согласно DOM спецификации:</p>
+<ul>
+<li><code>1</code> - элемент</li>
+<li><code>3</code> - текстовый узел</li>
+<li><code>8</code> - комментарий</li>
+<li><code>9</code> - документ</li>
+</ul>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> div <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>div<span class="token punctuation">.</span>nodeType<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 1</span>
+
+</code></pre>
+<h4 id="nodename-readonly"><code>nodeName</code> (readonly)</h4>
+<p>Имя узла (в нижнем регистре для элементов).</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> div <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>div<span class="token punctuation">.</span>nodeName<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// "div"</span>
+
+</code></pre>
+<h4 id="tagname-readonly"><code>tagName</code> (readonly)</h4>
+<p>Имя тега в верхнем регистре (только для элементов).</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> div <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>div<span class="token punctuation">.</span>tagName<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// "DIV"</span>
+
+</code></pre>
+<h4 id="textcontent-readonly"><code>textContent</code> (readonly)</h4>
+<p>Текстовое содержимое узла и всех его потомков.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div&gt;Hello &lt;span&gt;World&lt;/span&gt;!&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> div <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>div<span class="token punctuation">.</span>textContent<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// "Hello World!"</span>
+
+</code></pre>
+<h4 id="children-readonly"><code>children</code> (readonly)</h4>
+<p>Массив дочерних элементов (только элементы, без текстовых узлов).</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div&gt;&lt;p&gt;Text&lt;/p&gt;&lt;!-- comment --&gt;&lt;span&gt;More&lt;/span&gt;&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> div <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>div<span class="token punctuation">.</span>children<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 2 (p и span)</span>
+
+</code></pre>
+<h4 id="childnodes-readonly"><code>childNodes</code> (readonly)</h4>
+<p>Массив всех дочерних узлов (включая текстовые узлы и комментарии).</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div&gt;&lt;p&gt;Text&lt;/p&gt;&lt;!-- comment --&gt;&lt;span&gt;More&lt;/span&gt;&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> div <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>div<span class="token punctuation">.</span>childNodes<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// больше 2 (включая пробелы)</span>
+
+</code></pre>
+<h4 id="classname-readonly"><code>className</code> (readonly)</h4>
+<p>Значение атрибута <code>class</code>.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div class="container active"&gt;Content&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> div <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>div<span class="token punctuation">.</span>className<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// "container active"</span>
+
+</code></pre>
+<h4 id="id-readonly"><code>id</code> (readonly)</h4>
+<p>Значение атрибута <code>id</code>.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div id="main"&gt;Content&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> div <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>div<span class="token punctuation">.</span>id<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// "main"</span>
+
+</code></pre>
+<h4 id="attributes-readonly"><code>attributes</code> (readonly)</h4>
+<p>Коллекция атрибутов с методом <code>getNamedItem()</code>.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;input type="text" name="username" required&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> input <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'input'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> attrs <span class="token operator">=</span> input<span class="token punctuation">.</span>attributes<span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>attrs<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 3</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>attrs<span class="token punctuation">.</span><span class="token function">getNamedItem</span><span class="token punctuation">(</span><span class="token string">'type'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>value<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// "text"</span>
+
+</code></pre>
+<h3 id="методы-поиска-элементов">Методы поиска элементов</h3>
+<h4 id="getelementbyidid"><code>getElementById(id)</code></h4>
+<p>Находит элемент по ID. Возвращает первый найденный элемент или <code>null</code>.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div&gt;&lt;p id="intro"&gt;Hello&lt;/p&gt;&lt;p id="main"&gt;World&lt;/p&gt;&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> intro <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'intro'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>intro<span class="token punctuation">.</span>textContent<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// "Hello"</span>
+
+</code></pre>
+<h4 id="getelementsbytagnametagname"><code>getElementsByTagName(tagName)</code></h4>
+<p>Находит все элементы с указанным тегом. Возвращает массив.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div&gt;&lt;p&gt;First&lt;/p&gt;&lt;p&gt;Second&lt;/p&gt;&lt;span&gt;Third&lt;/span&gt;&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> paragraphs <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">getElementsByTagName</span><span class="token punctuation">(</span><span class="token string">'p'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>paragraphs<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 2</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>paragraphs<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>textContent<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// "First"</span>
+
+</code></pre>
+<h4 id="getelementsbyclassnameclassname"><code>getElementsByClassName(className)</code></h4>
+<p>Находит все элементы с указанным классом. Возвращает массив.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div&gt;&lt;p class="highlight"&gt;Text 1&lt;/p&gt;&lt;p class="highlight bold"&gt;Text 2&lt;/p&gt;&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> highlighted <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">getElementsByClassName</span><span class="token punctuation">(</span><span class="token string">'highlight'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>highlighted<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 2</span>
+
+</code></pre>
+<h4 id="queryselectorselector"><code>querySelector(selector)</code></h4>
+<p>Находит первый элемент по селектору. Поддерживает:</p>
+<ul>
+<li>По ID: <code>#myid</code></li>
+<li>По классу: <code>.myclass</code></li>
+<li>По тегу: <code>div</code></li>
+<li>По атрибуту: <code>input[type="text"]</code></li>
+</ul>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div&gt;&lt;p id="first" class="intro"&gt;Hello&lt;/p&gt;&lt;p class="content"&gt;World&lt;/p&gt;&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">var</span> byId <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'#first'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>        <span class="token comment">// &lt;p id="first"&gt;</span>
+<span class="token keyword">var</span> byClass <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'.intro'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>     <span class="token comment">// &lt;p class="intro"&gt;</span>
+<span class="token keyword">var</span> byTag <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'p'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>            <span class="token comment">// первый &lt;p&gt;</span>
+<span class="token keyword">var</span> byAttr <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'p[class="intro"]'</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// &lt;p class="intro"&gt;</span>
+
+</code></pre>
+<h4 id="queryselectorallselector"><code>querySelectorAll(selector)</code></h4>
+<p>Находит все элементы по селектору. Поддерживает составные селекторы через запятую.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div&gt;&lt;h1&gt;Title&lt;/h1&gt;&lt;h2&gt;Subtitle&lt;/h2&gt;&lt;h3&gt;Section&lt;/h3&gt;&lt;p&gt;Text&lt;/p&gt;&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Найти все заголовки</span>
+<span class="token keyword">var</span> headings <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelectorAll</span><span class="token punctuation">(</span><span class="token string">'h1, h2, h3'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>headings<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 3</span>
+
+<span class="token comment">// Найти все элементы с классом</span>
+<span class="token keyword">var</span> items <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelectorAll</span><span class="token punctuation">(</span><span class="token string">'.item, .highlight'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+</code></pre>
+<h3 id="методы-работы-с-атрибутами">Методы работы с атрибутами</h3>
+<h4 id="getattributename"><code>getAttribute(name)</code></h4>
+<p>Получает значение атрибута. Возвращает <code>null</code> если атрибут не найден.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;img src="image.jpg" alt="Description" width="100"&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> img <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'img'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>img<span class="token punctuation">.</span><span class="token function">getAttribute</span><span class="token punctuation">(</span><span class="token string">'src'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>    <span class="token comment">// "image.jpg"</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>img<span class="token punctuation">.</span><span class="token function">getAttribute</span><span class="token punctuation">(</span><span class="token string">'alt'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>    <span class="token comment">// "Description"</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>img<span class="token punctuation">.</span><span class="token function">getAttribute</span><span class="token punctuation">(</span><span class="token string">'height'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// null</span>
+
+</code></pre>
+<h4 id="hasattributename"><code>hasAttribute(name)</code></h4>
+<p>Проверяет наличие атрибута. Возвращает <code>true</code> или <code>false</code>.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;input type="text" required&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> input <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'input'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>input<span class="token punctuation">.</span><span class="token function">hasAttribute</span><span class="token punctuation">(</span><span class="token string">'type'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>     <span class="token comment">// true</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>input<span class="token punctuation">.</span><span class="token function">hasAttribute</span><span class="token punctuation">(</span><span class="token string">'required'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// true</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>input<span class="token punctuation">.</span><span class="token function">hasAttribute</span><span class="token punctuation">(</span><span class="token string">'disabled'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// false</span>
+
+</code></pre>
+<h3 id="расширенные-методы-поиска">Расширенные методы поиска</h3>
+<h4 id="getelementsbyattributeattrname-attrvalue"><code>getElementsByAttribute(attrName, attrValue)</code></h4>
+<p>Находит элементы по атрибуту. Если <code>attrValue</code> не указан, находит элементы с любым значением атрибута.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div&gt;&lt;input type="text" name="user"&gt;&lt;input type="password" name="pass"&gt;&lt;button type="submit"&gt;OK&lt;/button&gt;&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Все элементы с атрибутом type</span>
+<span class="token keyword">var</span> withType <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">getElementsByAttribute</span><span class="token punctuation">(</span><span class="token string">'type'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>withType<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 3</span>
+
+<span class="token comment">// Только текстовые поля</span>
+<span class="token keyword">var</span> textInputs <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">getElementsByAttribute</span><span class="token punctuation">(</span><span class="token string">'type'</span><span class="token punctuation">,</span> <span class="token string">'text'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>textInputs<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 1</span>
+
+</code></pre>
+<h4 id="getallelements"><code>getAllElements()</code></h4>
+<p>Возвращает все элементы в дереве (только узлы типа элемент).</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div&gt;&lt;p&gt;Text&lt;/p&gt;&lt;span&gt;&lt;a href="#"&gt;Link&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> allElements <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">getAllElements</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>allElements<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 4 (div, p, span, a)</span>
+
+</code></pre>
+<h3 id="методы-отладки">Методы отладки</h3>
+<h4 id="tostring"><code>toString()</code></h4>
+<p>Возвращает строковое представление элемента.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div id="main" class="container"&gt;Hello World&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> div <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>div<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// '&lt;div id="main" class="container"&gt;'</span>
+
+</code></pre>
+<h4 id="debug"><code>debug()</code></h4>
+<p>Возвращает объект с отладочной информацией.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div id="test" class="box"&gt;Content&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> div <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> info <span class="token operator">=</span> div<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// {</span>
+<span class="token comment">//   nodeType: 1,</span>
+<span class="token comment">//   nodeName: "div",</span>
+<span class="token comment">//   tagName: "DIV",</span>
+<span class="token comment">//   id: "test",</span>
+<span class="token comment">//   className: "box",</span>
+<span class="token comment">//   textContent: "Content",</span>
+<span class="token comment">//   childrenCount: 0,</span>
+<span class="token comment">//   attributesCount: 2</span>
+<span class="token comment">// }</span>
+
+</code></pre>
+<h4 id="innerhtml"><code>innerHTML()</code></h4>
+<p>Возвращает HTML содержимое элемента (без самого элемента).</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div&gt;&lt;p&gt;Hello&lt;/p&gt;&lt;span&gt;World&lt;/span&gt;&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> div <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>div<span class="token punctuation">.</span><span class="token function">innerHTML</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// "&lt;p&gt;Hello&lt;/p&gt;&lt;span&gt;World&lt;/span&gt;"</span>
+
+</code></pre>
+<h4 id="outerhtml"><code>outerHTML()</code></h4>
+<p>Возвращает полный HTML элемента (включая сам элемент).</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div class="box"&gt;&lt;p&gt;Content&lt;/p&gt;&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> div <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>div<span class="token punctuation">.</span><span class="token function">outerHTML</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// '&lt;div class="box"&gt;&lt;p&gt;Content&lt;/p&gt;&lt;/div&gt;'</span>
+
+</code></pre>
+<h2 id="утилиты">Утилиты</h2>
+<h3 id="extractlinksrootnode"><code>extractLinks(rootNode)</code></h3>
+<p>Извлекает все ссылки из документа.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div&gt;&lt;a href="/page1" title="Page 1"&gt;Link 1&lt;/a&gt;&lt;a href="/page2"&gt;Link 2&lt;/a&gt;&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> links <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">extractLinks</span><span class="token punctuation">(</span>doc<span class="token punctuation">.</span>root<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// [</span>
+<span class="token comment">//   { text: "Link 1", href: "/page1", title: "Page 1" },</span>
+<span class="token comment">//   { text: "Link 2", href: "/page2", title: "" }</span>
+<span class="token comment">// ]</span>
+
+</code></pre>
+<h3 id="debugelementselements-options"><code>debugElements(elements, options)</code></h3>
+<p>Создает отладочную информацию для массива элементов.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div&gt;&lt;p class="intro"&gt;Hello&lt;/p&gt;&lt;p class="content"&gt;World&lt;/p&gt;&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> paragraphs <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">getElementsByTagName</span><span class="token punctuation">(</span><span class="token string">'p'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">var</span> info <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">debugElements</span><span class="token punctuation">(</span>paragraphs<span class="token punctuation">,</span> <span class="token punctuation">{</span>
+  maxElements<span class="token punctuation">:</span> <span class="token number">5</span><span class="token punctuation">,</span>      <span class="token comment">// максимум элементов для вывода</span>
+  showContent<span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>   <span class="token comment">// показывать содержимое</span>
+  showAttributes<span class="token punctuation">:</span> <span class="token boolean">true</span> <span class="token comment">// показывать атрибуты</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>info<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+</code></pre>
+<h3 id="logelementelement-prefix"><code>logElement(element, prefix)</code></h3>
+<p>Выводит информацию об элементе в консоль.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> html <span class="token operator">=</span> <span class="token string">'&lt;div id="test" class="box"&gt;Hello World&lt;/div&gt;'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> div <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+html<span class="token punctuation">.</span><span class="token function">logElement</span><span class="token punctuation">(</span>div<span class="token punctuation">,</span> <span class="token string">'Найден элемент: '</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// Выведет: "Найден элемент: &lt;div id="test" class="box"&gt; -&gt; "Hello World""</span>
+
+</code></pre>
+<h2 id="практические-примеры">Практические примеры</h2>
+<h3 id="парсинг-новостной-страницы">Парсинг новостной страницы</h3>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> newsHtml <span class="token operator">=</span> <span class="token template-string"><span class="token string">`
+&lt;div class="news-container"&gt;
+  &lt;article class="news-item" data-id="1"&gt;
+    &lt;h2&gt;Заголовок новости&lt;/h2&gt;
+    &lt;p class="summary"&gt;Краткое описание новости...&lt;/p&gt;
+    &lt;a href="/news/1" class="read-more"&gt;Читать далее&lt;/a&gt;
+  &lt;/article&gt;
+  &lt;article class="news-item" data-id="2"&gt;
+    &lt;h2&gt;Другая новость&lt;/h2&gt;
+    &lt;p class="summary"&gt;Другое описание...&lt;/p&gt;
+    &lt;a href="/news/2" class="read-more"&gt;Читать далее&lt;/a&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+`</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>newsHtml<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Найти все новости</span>
+<span class="token keyword">var</span> articles <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">getElementsByClassName</span><span class="token punctuation">(</span><span class="token string">'news-item'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Найдено новостей:'</span><span class="token punctuation">,</span> articles<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Обработать каждую новость</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">var</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> articles<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">var</span> article <span class="token operator">=</span> articles<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> title <span class="token operator">=</span> article<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'h2'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>textContent<span class="token punctuation">;</span>
+  <span class="token keyword">var</span> summary <span class="token operator">=</span> article<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'.summary'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>textContent<span class="token punctuation">;</span>
+  <span class="token keyword">var</span> link <span class="token operator">=</span> article<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'a'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getAttribute</span><span class="token punctuation">(</span><span class="token string">'href'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> id <span class="token operator">=</span> article<span class="token punctuation">.</span><span class="token function">getAttribute</span><span class="token punctuation">(</span><span class="token string">'data-id'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Новость #'</span> <span class="token operator">+</span> id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Заголовок:'</span><span class="token punctuation">,</span> title<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Описание:'</span><span class="token punctuation">,</span> summary<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Ссылка:'</span><span class="token punctuation">,</span> link<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'---'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+</code></pre>
+<h3 id="извлечение-данных-формы">Извлечение данных формы</h3>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> formHtml <span class="token operator">=</span> <span class="token template-string"><span class="token string">`
+&lt;form id="registration"&gt;
+  &lt;input type="text" name="username" placeholder="Имя пользователя" required&gt;
+  &lt;input type="email" name="email" placeholder="Email" required&gt;
+  &lt;input type="password" name="password" placeholder="Пароль" required&gt;
+  &lt;select name="country"&gt;
+    &lt;option value="ru"&gt;Россия&lt;/option&gt;
+    &lt;option value="ua"&gt;Украина&lt;/option&gt;
+  &lt;/select&gt;
+  &lt;input type="checkbox" name="agree" checked&gt;
+  &lt;button type="submit"&gt;Зарегистрироваться&lt;/button&gt;
+&lt;/form&gt;
+`</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>formHtml<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> form <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'registration'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Найти все поля ввода</span>
+<span class="token keyword">var</span> inputs <span class="token operator">=</span> form<span class="token punctuation">.</span><span class="token function">getElementsByTagName</span><span class="token punctuation">(</span><span class="token string">'input'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Полей ввода:'</span><span class="token punctuation">,</span> inputs<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Анализ полей</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">var</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> inputs<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">var</span> input <span class="token operator">=</span> inputs<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> type <span class="token operator">=</span> input<span class="token punctuation">.</span><span class="token function">getAttribute</span><span class="token punctuation">(</span><span class="token string">'type'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> name <span class="token operator">=</span> input<span class="token punctuation">.</span><span class="token function">getAttribute</span><span class="token punctuation">(</span><span class="token string">'name'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> required <span class="token operator">=</span> input<span class="token punctuation">.</span><span class="token function">hasAttribute</span><span class="token punctuation">(</span><span class="token string">'required'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> checked <span class="token operator">=</span> input<span class="token punctuation">.</span><span class="token function">hasAttribute</span><span class="token punctuation">(</span><span class="token string">'checked'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Поле:'</span><span class="token punctuation">,</span> name<span class="token punctuation">,</span> <span class="token string">'тип:'</span><span class="token punctuation">,</span> type<span class="token punctuation">,</span> <span class="token string">'обязательное:'</span><span class="token punctuation">,</span> required<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>type <span class="token operator">===</span> <span class="token string">'checkbox'</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Отмечено:'</span><span class="token punctuation">,</span> checked<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+</code></pre>
+<h3 id="поиск-и-анализ-таблиц">Поиск и анализ таблиц</h3>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">var</span> tableHtml <span class="token operator">=</span> <span class="token template-string"><span class="token string">`
+&lt;table class="data-table"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Имя&lt;/th&gt;
+      &lt;th&gt;Возраст&lt;/th&gt;
+      &lt;th&gt;Город&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Иван&lt;/td&gt;
+      &lt;td&gt;25&lt;/td&gt;
+      &lt;td&gt;Москва&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Мария&lt;/td&gt;
+      &lt;td&gt;30&lt;/td&gt;
+      &lt;td&gt;СПб&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+`</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">var</span> doc <span class="token operator">=</span> html<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>tableHtml<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> table <span class="token operator">=</span> doc<span class="token punctuation">.</span>root<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'.data-table'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Получить заголовки</span>
+<span class="token keyword">var</span> headers <span class="token operator">=</span> table<span class="token punctuation">.</span><span class="token function">querySelectorAll</span><span class="token punctuation">(</span><span class="token string">'thead th'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> headerTexts <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">var</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> headers<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  headerTexts<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>headers<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">.</span>textContent<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Колонки:'</span><span class="token punctuation">,</span> headerTexts<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Получить данные</span>
+<span class="token keyword">var</span> rows <span class="token operator">=</span> table<span class="token punctuation">.</span><span class="token function">querySelectorAll</span><span class="token punctuation">(</span><span class="token string">'tbody tr'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">var</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> rows<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">var</span> row <span class="token operator">=</span> rows<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> cells <span class="token operator">=</span> row<span class="token punctuation">.</span><span class="token function">getElementsByTagName</span><span class="token punctuation">(</span><span class="token string">'td'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> rowData <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">var</span> j <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> j <span class="token operator">&lt;</span> cells<span class="token punctuation">.</span>length<span class="token punctuation">;</span> j<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    rowData<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>cells<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">.</span>textContent<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Строка '</span> <span class="token operator">+</span> <span class="token punctuation">(</span>i <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">':'</span><span class="token punctuation">,</span> rowData<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+</code></pre>
+<h2 id="совместимость">Совместимость</h2>
+<p>Библиотека разработана для Duktape 1.8.0 и использует только базовые JavaScript функции:</p>
+<ul>
+<li>Нет стрелочных функций</li>
+<li>Нет <code>const</code>/<code>let</code></li>
+<li>Нет современных методов массивов</li>
+<li>Ручная реализация <code>trim()</code></li>
+<li>Совместимость с ES5</li>
+</ul>
+<h2 id="ограничения">Ограничения</h2>
+<ol>
+<li><strong>CSS селекторы</strong>: Поддерживаются только базовые селекторы (ID, класс, тег, атрибут)</li>
+<li><strong>Составные селекторы</strong>: Только через запятую, без вложенности</li>
+<li><strong>Модификация DOM</strong>: Только чтение, изменения не поддерживаются</li>
+<li><strong>События</strong>: Не поддерживаются</li>
+<li><strong>Namespace</strong>: HTML без поддержки XML namespace</li>
+</ol>
+</div>
+</body>
+
+</html>
